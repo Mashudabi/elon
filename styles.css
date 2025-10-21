@@ -1,0 +1,177 @@
+:root {
+  --bg: #e0f3ff;
+  --sky: linear-gradient(180deg, #bce0ff, #e6f7ff 80%);
+  --accent: #2b8aef;
+  --danger: #ff5252;
+  --muted: #6b7280;
+}
+
+/* === GENERAL LAYOUT === */
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  background: var(--sky);
+  color: #111;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* === HEADER === */
+header {
+  padding: 18px;
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+  font-size: 22px;
+  color: var(--accent);
+}
+
+/* === MAIN === */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+}
+
+/* === ARENA / SKY AREA === */
+.arena {
+  width: 90%;
+  max-width: 900px;
+  height: 350px;
+  background: linear-gradient(180deg, #dff3ff 40%, #a0e2ff 80%);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(20, 40, 80, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Runway strip */
+.runway {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(90deg, #777, #999);
+}
+
+/* Plane itself */
+.plane {
+  position: absolute;
+  bottom: 40px;
+  left: 20px;
+  font-size: 40px;
+  transition: transform 0.3s ease, opacity 0.8s ease;
+  transform: translate(0, 0) rotate(0deg);
+  opacity: 1;
+}
+
+/* Plane collapse/fall effect */
+.plane.collapsed {
+  opacity: 0;
+  transform: translate(0, 200px) rotate(45deg);
+}
+
+/* Status label */
+.status {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* === CONTROL PANELS === */
+.controls {
+  width: 90%;
+  max-width: 900px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* Panels */
+.panel {
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 6px 18px rgba(20, 40, 80, 0.05);
+}
+
+.panel h3 {
+  margin: 0;
+  font-size: 15px;
+  color: #123;
+}
+
+.panel .hint {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Inputs & buttons */
+.row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+input[type="number"] {
+  width: 120px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+button.btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+button.btn:hover {
+  background: #1f6cd1;
+}
+
+button.btn:active {
+  transform: translateY(1px);
+}
+
+/* Message / error text */
+.msg {
+  color: var(--danger);
+  font-size: 13px;
+  min-height: 16px;
+}
+
+/* === FOOTER === */
+footer {
+  text-align: center;
+  padding: 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 700px) {
+  .controls {
+    grid-template-columns: 1fr;
+  }
+}

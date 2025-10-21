@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Plane Takeoff Simulation</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>✈️ Plane Takeoff Simulation</h1>
+  </header>
+
+  <main>
+    <!-- Arena / Simulation area -->
+    <div class="arena" id="arena">
+      <div class="status" id="status">Idle</div>
+      <div class="runway"></div>
+      <div class="plane" id="plane">✈️</div>
+    </div>
+
+    <!-- Control panels -->
+    <div class="controls">
+      <!-- Admin altitude control -->
+      <div class="panel">
+        <h3>Admin Altitude</h3>
+        <div class="hint">Set max altitude (100–1000)</div>
+        <div class="row">
+          <input id="altInput" type="number" min="100" max="1000" placeholder="100–1000" />
+          <button class="btn" id="setAlt">Set Altitude</button>
+        </div>
+        <div class="msg" id="msgAlt"></div>
+      </div>
+
+      <!-- Manual takeoff -->
+      <div class="panel">
+        <h3>Manual Takeoff</h3>
+        <div class="hint">Click to manually trigger a flight</div>
+        <div class="row">
+          <button class="btn" id="manualTakeoff">Takeoff Now</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    Plane takes off randomly every 4 seconds. Collapses at a random altitude set by admin.
+  </footer>
+
+  <!-- === JavaScript === -->
+  <script>
+  (function(){
+    const plane = document.getElementById('plane');
+    const status = document.getElementById('status');
+    const arena = document.getElementById('arena');
+    const altInput = document.getElementById('altInput');
+    const msgAlt = document.getElementById('msgAlt');
+    const setAlt = document.getElementById('setAlt');
+    const manualBtn = document.getElementById('manualTakeoff');
+
+    let running = false;
+    let collapsed = false;
+    let autoTimer = null;
+    let runEndTimeout = null;
+    let restartTimeout = null;
+    let adminMaxAlt = 400; // default altitude
+    let runDuration = 0;
+
+    function randInt(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+    function startFlight(){
+      if (running || collapsed) return;
+      running = true;
+      status.textContent = "🛫 Taking off...";
+      runDuration = randInt(2000, 6000); // 2–6s takeoff duration
+      const maxAlt = randInt(100, adminMaxAlt);
+      const arenaRect = arena.getBoundingClientRect();
+      const targetY = -maxAlt;
+      const targetX = arenaRect.width - 100;
+
+      plane.style.transition = `transform ${runDuration}ms cubic-bezier(.2,.9,.3,1)`;
+      plane.style.transform = `translate(${targetX}px, ${targetY}px) rotate(-20deg)`;
+
+      runEndTimeout = setTimeout(() => {
+        collapsePlane();
+      }, runDuration);
+    }
+
+    function collapsePlane(){
+      if (!running) return;
+      running = false;
+      collapsed = true;
+      status.textContent = "💥 Plane collapsed!";
+      plane.classList.add('collapsed');
+
+      restartTimeout = setTimeout(() => {
+        plane.classList.remove('collapsed');
+        plane.style.transition = "transform 0.8s ease";
+        plane.style.transform = `translate(0px, 0px) rotate(0deg)`;
+        collapsed = false;
+        status.textContent = "Idle";
+        scheduleNextFlight();
+      }, 4000);
+    }
+
+    function scheduleNextFlight(){
+      clearTimeout(autoTimer);
+      autoTimer = setTimeout(() => {
+        startFlight();
+      }, 4000);
+    }
+
+    setAlt.addEventListener('click', () => {
+      const val = parseInt(altInput.value, 10);
+      if (isNaN(val) || val < 100 || val > 1000){
+        msgAlt.textContent = "Enter a value between 100 and 1000.";
+        return;
+      }
+      adminMaxAlt = val;
+      msgAlt.textContent = `Altitude limit set to ${val}px.`;
+    });
+
+    manualBtn.addEventListener('click', startFlight);
+
+    // Start automatic cycle
+    scheduleNextFlight();
+  })();
+  </script>
+</body>
+</html>
